@@ -6,6 +6,7 @@ class LivroController {
     static async listarLivros (req,res,next){
 
         try {
+
             const listaLivros = await livro.find({});
             res.status(200).json(listaLivros);
         } catch (error) {
