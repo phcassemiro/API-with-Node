@@ -1,4 +1,5 @@
-import mongoose, { mongo } from "mongoose";
+/* eslint-disable no-undef */
+import mongoose from "mongoose";
 
 async function conectaNaDatabase(){
     mongoose.connect(process.env.DB_CONNECTION_STRING)

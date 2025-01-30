@@ -15,32 +15,36 @@ class AutorController {
 
     };
 
-    static async listarAutorPorId (req,res){
+    static async listarAutorPorId (req,res,next){
 
         try {
             const id = req.params.id;
             const autorEncontrado = await autor.findById(id);
-            res.status(200).json(autorEncontrado);
+            if(autorEncontrado !== null){
+
+                res.status(200).json(autorEncontrado);
+            }else{
+                res.status(404).json({message: 'Id do autor não localizado'})
+            }
         } catch (error) {
 
-            res.status(500).json({message: `${error.message} - falha na requisição do autor`})
-
+            next(error);
         }
 
     };
 
-    static async cadastrarAutor(req,res){
+    static async cadastrarAutor(req,res, next){
         try {
 
             const novoAutor = await autor.create(req.body);
             res.status(201).json({ message: "criado com sucesso", autor: novoAutor });
 
         } catch (error) {
-            res.status(500).json({message: `${error.message} - falha ao cadastrar o autor`})
+            next(error);
         }
     }
 
-    static async atualizarAutor (req,res){
+    static async atualizarAutor (req,res, next){
 
         try {
             const id = req.params.id;
@@ -48,13 +52,13 @@ class AutorController {
             res.status(200).json({message: "autor atualizado"});
         } catch (error) {
 
-            res.status(500).json({message: `${error.message} - falha na atualização`})
+            next(error);
 
         }
 
     };
 
-    static async excluirAutor (req,res){
+    static async excluirAutor (req,res, next){
 
         try {
             const id = req.params.id;
@@ -62,7 +66,7 @@ class AutorController {
             res.status(200).json({message: "autor excluido"});
         } catch (error) {
 
-            res.status(500).json({message: `${error.message} - falha na exclusão do autor`})
+            next(error);
 
         }
 
