@@ -7,7 +7,9 @@ class LivroController {
 
         try {
 
-            const listaLivros = await livro.find({});
+            const {limite = 5,pagina = 1} = req.query;
+
+            const listaLivros = await livro.find({}).skip(( pagina - 1 ) * limite).limit(limite);
             res.status(200).json(listaLivros);
         } catch (error) {
 
@@ -76,9 +78,9 @@ class LivroController {
     };
 
     static async listarLivroPorEditora(req,res, next){
-        const editora = req.query.editora;
 
         try {
+            const editora = req.query.editora;
             const livrosPorEditora = await livro.find({ editora: editora });
             res.status(200).json(livrosPorEditora);
         } catch (error) {
@@ -87,6 +89,26 @@ class LivroController {
 
         }
     };
+
+    static async listarLivroPorFiltro(req,res, next){
+
+        try {
+            const { editora, titulo } = req.query;
+            // const regex = new RegExp(titulo, "i");
+            const busca = {};
+
+            if(editora) busca.editora = /editora/i;
+            if(titulo) busca.titulo = { $regex: titulo, $options: "i" };
+
+            const livrosResultado = await livro.find(busca);
+            res.status(200).json(livrosResultado);
+        } catch (error) {
+
+            next(error);
+
+        }
+    };
+
 
 
 }
