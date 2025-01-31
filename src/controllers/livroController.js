@@ -1,5 +1,6 @@
 import livro from "../models/Livro.js";
 import { autor } from "../models/Autor.js"
+import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js"
 
 class LivroController {
 
@@ -7,10 +8,21 @@ class LivroController {
 
         try {
 
-            const {limite = 5,pagina = 1} = req.query;
+            let {limite = 5,pagina = 1} = req.query;
 
-            const listaLivros = await livro.find({}).skip(( pagina - 1 ) * limite).limit(limite);
-            res.status(200).json(listaLivros);
+            limite = parseInt(limite)
+            pagina = parseInt(pagina)
+
+            if(limite > 0 && pagina > 0){
+
+                const listaLivros = await livro.find({}).sort({_id: -1}).skip(( pagina - 1 ) * limite).limit(limite);
+                res.status(200).json(listaLivros);
+
+            }else{
+                next(new RequisicaoIncorreta)
+            }
+
+
         } catch (error) {
 
             next(error);
